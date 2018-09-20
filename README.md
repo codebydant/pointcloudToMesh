@@ -7,8 +7,8 @@ C++ application to convert pcd file, ply file, txt file or xyz point cloud to ME
 
 in the main folder:
 
-	  - cd build  
-	  - cmake ../src/
+    - cd build  
+    - cmake ../src/
     - make
        
         	 

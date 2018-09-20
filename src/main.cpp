@@ -78,7 +78,7 @@ pcl::Poisson<pcl::PointNormal> poisson;
 
 poisson.setDepth(7);//9
 poisson.setInputCloud (cloud_smoothed_normals);
-poisson.setPointWeight(4);//4
+poisson.setPointWeight(2);//4
 //poisson.setDegree(5);
 poisson.setSamplesPerNode(1.5);//1.5
 poisson.setScale(1.1);//1.1
@@ -114,6 +114,20 @@ std::cout << "Press [q] to exit!" << std::endl;
 while (!viewer->wasStopped ()){
     viewer->spin();
 }
+}
+
+void cloudPointFilter(pcl::PointCloud<pcl::PointXYZ>::Ptr & cloud,pcl::PointCloud<pcl::PointXYZ>::Ptr& filterCloud){
+
+  std::cout << "Filtering point cloud..." << std::endl;
+  std::cout << "Point cloud before filter:" << cloud->points.size()<< std::endl;
+
+  pcl::RadiusOutlierRemoval<pcl::PointXYZ> radius_outlier_removal;
+  radius_outlier_removal.setInputCloud(cloud);
+  radius_outlier_removal.setRadiusSearch(0.01);
+  radius_outlier_removal.setMinNeighborsInRadius(1);
+  radius_outlier_removal.filter(*filterCloud);
+
+  std::cout << "Point cloud after filter:" << filterCloud->points.size() << std::endl;
 }
 
 using namespace std;
@@ -234,12 +248,15 @@ int main(int argc, char **argv){
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz (new pcl::PointCloud<pcl::PointXYZ>());
   pcl::copyPointCloud(*cloud,*cloud_xyz);
 
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz_filtered (new pcl::PointCloud<pcl::PointXYZ>());
+  cloudPointFilter(cloud_xyz,cloud_xyz_filtered);
+
   pcl::PolygonMesh cloud_mesh;
-  create_mesh(cloud_xyz,cloud_mesh);
+  create_mesh(cloud_xyz_filtered,cloud_mesh);
 
   output_dir += "/cloudConvertedMESH";
 
-  std::string sav = "saved point cloud in:";
+  std::string sav = "saved mesh in:";
   sav += output_dir;
 
   pcl::console::print_info(sav.c_str());

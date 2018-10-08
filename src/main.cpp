@@ -54,7 +54,6 @@
 #include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 
-#include <pcl/segmentation/region_growing_rgb.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
 #include <iostream>
@@ -334,11 +333,23 @@ pcl::console::print_info (" points]\n");
 
  }
 
-void vizualizeMesh(pcl::PolygonMesh &mesh){
+void vizualizeMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr & cloud,pcl::PolygonMesh &mesh){
 
 boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("MAP3D MESH"));
+
+int PORT1 = 0;
+viewer->createViewPort(0.0, 0.0, 0.5, 1.0, PORT1);
+viewer->setBackgroundColor (0, 0, 0, PORT1);
+viewer->addText("ORIGINAL", 10, 10, "PORT1", PORT1);
+viewer->addPointCloud(cloud,"original_cloud",PORT1);
+
+int PORT2 = 0;
+viewer->createViewPort(0.5, 0.0, 1.0, 1.0, PORT2);
+viewer->setBackgroundColor (0, 0, 0, PORT2);
+viewer->addText("MESH", 10, 10, "PORT2", PORT2);
+viewer->addPolygonMesh(mesh,"mesh",PORT2);
+
 viewer->setBackgroundColor (0, 0, 0);
-viewer->addPolygonMesh(mesh,"meshes",0);
 viewer->addCoordinateSystem (1.0);
 viewer->initCameraParameters ();
 viewer->resetCamera();
@@ -429,15 +440,15 @@ int main(int argc, char **argv){
       pcl::console::print_info (" points]\n");
     }else if(file_is_ply){
       pcl::io::loadPLYFile(argv[filenames[0]],*cloud);
-      if(cloud->points.size()<=0){
+      if(cloud->points.size()<=0 or cloud->points[0].x<=0 and cloud->points[0].y<=0 and cloud->points[0].z<=0){
           pcl::console::print_warn("\nloadPLYFile could not read the cloud, attempting to loadPolygonFile...\n");
           pcl::io::loadPolygonFile(argv[filenames[0]], cl);
           pcl::fromPCLPointCloud2(cl.cloud, *cloud);
-          if(cloud->points.size()<=0){
+          if(cloud->points.size()<=0 or cloud->points[0].x<=0 and cloud->points[0].y<=0 and cloud->points[0].z<=0){
               pcl::console::print_warn("\nloadPolygonFile could not read the cloud, attempting to PLYReader...\n");
               pcl::PLYReader plyRead;
               plyRead.read(argv[filenames[0]],*cloud);
-              if(cloud->points.size()<=0){
+              if(cloud->points.size()<=0 or cloud->points[0].x<=0 and cloud->points[0].y<=0 and cloud->points[0].z<=0){
                   pcl::console::print_error("\nError. ply file is not compatible.\n");
                   return -1;
               }
@@ -496,7 +507,7 @@ int main(int argc, char **argv){
   std::cout << std::endl;
   pcl::io::savePolygonFilePLY(output_dir.c_str(),cloud_mesh,true);
 
-  vizualizeMesh(cloud_mesh);
+  vizualizeMesh(cloud_xyz,cloud_mesh);
    
   return 0;
 }

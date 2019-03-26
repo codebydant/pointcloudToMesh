@@ -32,6 +32,6 @@ You can modify the parameters in "createMeshFromCloud" method at main.cpp to get
     gp3.setMu(5);                            //It was 2.5
     gp3.setMaximumNearestNeighbors(100);     //It was 100
     gp3.setMaximumSurfaceAngle(M_PI/4);      //45 degrees   
-    gp3.setMinimumAngle(M_PI/18);            // 10 degrees 
-    gp3.setMaximumAngle(M_PI/1.5);           // 120 degrees     
+    gp3.setMinimumAngle(M_PI/18);            //10 degrees 
+    gp3.setMaximumAngle(M_PI/1.5);           //120 degrees     
     gp3.setNormalConsistency(false); 

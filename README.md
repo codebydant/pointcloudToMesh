@@ -3,7 +3,7 @@ C++ application to convert pcd file, ply file, txt file or xyz point cloud to ME
 
 -------------------
 ## Example
-
+<img src="./example/mss.png" align="center" height="400" width="700"><br>
 
 ## Compile
 * Set "YOUR OWN" PCL Build DIR in CMakeList.txt e.g: **/opt/pcl-1.8.1/build** and save it

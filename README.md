@@ -2,6 +2,14 @@
 C++ application to convert pcd file, ply file, txt file or xyz point cloud to MESH representation (Gp3). 
 
 -------------------
+## Input file structure support
+
+* .pcd 
+* .ply
+* .txt
+* .xyz
+
+
 ## Example
 <img src="./example/mss1.png" align="center" height="400" width="700"><br>
 

@@ -9,6 +9,9 @@ C++ application to convert pcd file, ply file, txt file or xyz point cloud to ME
 * .txt
 * .xyz
 
+## Output file structure 
+Mesh cloud:
+* .ply
 
 ## Example
 <img src="./example/mss1.png" align="center" height="400" width="700"><br>

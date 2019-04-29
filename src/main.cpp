@@ -1,8 +1,7 @@
 /*********************************
            HEADERS
 **********************************/
-#include <pcl/common/common_headers.h>
-#include <pcl/features/normal_3d.h>
+
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/io/vtk_io.h>
@@ -11,51 +10,53 @@
 #include <pcl/io/file_io.h>
 #include <pcl/io/ply/ply_parser.h>
 #include <pcl/io/ply/ply.h>
+
+#include <pcl/point_types.h>
+
 #include <pcl/visualization/pcl_visualizer.h>
+
 #include <pcl/console/print.h>
 #include <pcl/console/parse.h>
 #include <pcl/console/time.h>
+
 #include <pcl/range_image/range_image.h>
-#include <pcl/visualization/pcl_visualizer.h>
+
 #include <pcl/common/transforms.h>
 #include <pcl/common/geometry.h>
 #include <pcl/common/common.h>
-#include <pcl/surface/vtk_smoothing/vtk_utils.h>
-#include <pcl/surface/gp3.h>
+#include <pcl/common/common_headers.h>
 
 #include <pcl/ModelCoefficients.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/point_types.h>
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/filters/passthrough.h>
-#include <pcl/filters/project_inliers.h>
-#include <pcl/filters/crop_box.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl/surface/convex_hull.h>
 
-#include <pcl/io/vtk_lib_io.h>
-#include <pcl/point_types.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/features/gasd.h>
 #include <pcl/features/normal_3d_omp.h>
-#include <pcl/surface/poisson.h>
-#include <pcl/surface/mls.h>
-#include <pcl/surface/simplification_remove_unused_vertices.h>
+
+#include <pcl/filters/crop_box.h>
 #include <pcl/filters/crop_hull.h>
-
-#include <pcl/search/search.h>
-#include <pcl/search/kdtree.h>
-
-#include <pcl/filters/extract_indices.h>
 #include <pcl/filters/voxel_grid.h>
-#include <pcl/filters/extract_indices.h>
 #include <pcl/filters/passthrough.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/filters/project_inliers.h>
 #include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
+
+#include <pcl/surface/poisson.h>
+#include <pcl/surface/mls.h>
+#include <pcl/surface/simplification_remove_unused_vertices.h>
+#include <pcl/surface/vtk_smoothing/vtk_utils.h>
+#include <pcl/surface/gp3.h>
+#include <pcl/surface/convex_hull.h>
+
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
+
+#include <pcl/search/search.h>
+#include <pcl/search/kdtree.h>
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -333,7 +334,7 @@ pcl::console::print_info (" points]\n");
 
  }
 
-void vizualizeMesh(pcl::PointCloud<pcl::PointXYZ>::Ptr & cloud,pcl::PolygonMesh &mesh){
+void vizualizeMesh(pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud,pcl::PolygonMesh &mesh){
 
 boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("MAP3D MESH"));
 
@@ -341,7 +342,6 @@ int PORT1 = 0;
 viewer->createViewPort(0.0, 0.0, 0.5, 1.0, PORT1);
 viewer->setBackgroundColor (0, 0, 0, PORT1);
 viewer->addText("ORIGINAL", 10, 10, "PORT1", PORT1);
-viewer->addPointCloud(cloud,"original_cloud",PORT1);
 
 int PORT2 = 0;
 viewer->createViewPort(0.5, 0.0, 1.0, 1.0, PORT2);
@@ -349,8 +349,25 @@ viewer->setBackgroundColor (0, 0, 0, PORT2);
 viewer->addText("MESH", 10, 10, "PORT2", PORT2);
 viewer->addPolygonMesh(mesh,"mesh",PORT2);
 
-viewer->setBackgroundColor (0, 0, 0);
-viewer->addCoordinateSystem (1.0);
+viewer->addCoordinateSystem();
+pcl::PointXYZ p1, p2, p3;
+
+p1.getArray3fMap() << 1, 0, 0;
+p2.getArray3fMap() << 0, 1, 0;
+p3.getArray3fMap() << 0,0.1,1;
+
+viewer->addText3D("x", p1, 0.2, 1, 0, 0, "x_");
+viewer->addText3D("y", p2, 0.2, 0, 1, 0, "y_");
+viewer->addText3D ("z", p3, 0.2, 0, 0, 1, "z_");
+
+if(cloud->points[0].r <= 0 and cloud->points[0].g <= 0 and cloud->points[0].b<= 0 ){
+  pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> color_handler(cloud,255,255,0);
+  viewer->removeAllPointClouds(0);
+  viewer->addPointCloud(cloud,color_handler,"original_cloud",PORT1);
+}else{
+  viewer->addPointCloud(cloud,"original_cloud",PORT1);
+}
+  
 viewer->initCameraParameters ();
 viewer->resetCamera();
 
@@ -462,32 +479,75 @@ int main(int argc, char **argv){
       pcl::console::print_value ("%d", cloud->size ());
       pcl::console::print_info (" points]\n");
 
-    }else if(file_is_txt or file_is_xyz){
+    }else if(file_is_txt){
       std::ifstream file(argv[filenames[0]]);
       if(!file.is_open()){
           std::cout << "Error: Could not find "<< argv[filenames[0]] << std::endl;
           return -1;
       }
+      
+      std::cout << "file opened." << std::endl;
       double x_,y_,z_;
-      while(file >> x_ >> y_ >> z_){
+      unsigned int r, g, b; 
+
+      while(file >> x_ >> y_ >> z_ >> r >> g >> b){
           pcl::PointXYZRGB pt;
           pt.x = x_;
           pt.y = y_;
-          pt.z= z_;
-          cloud->points.push_back(pt);
-      }
+          pt.z= z_;            
+          
+          uint8_t r_, g_, b_; 
+          r_ = uint8_t(r); 
+          g_ = uint8_t(g); 
+          b_ = uint8_t(b); 
 
+          uint32_t rgb_ = ((uint32_t)r_ << 16 | (uint32_t)g_ << 8 | (uint32_t)b_); 
+          pt.rgb = *reinterpret_cast<float*>(&rgb_);               
+              
+          cloud->points.push_back(pt);
+          //std::cout << "pointXYZRGB:" <<  pt << std::endl;
+      }      
+     
       pcl::console::print_info("\nFound txt file.\n");
       pcl::console::print_info ("[done, ");
       pcl::console::print_value ("%g", tt.toc ());
       pcl::console::print_info (" ms : ");
-      pcl::console::print_value ("%d", cloud->size ());
+      pcl::console::print_value ("%d", cloud->points.size ());
+      pcl::console::print_info (" points]\n");
+      
+  }else if(file_is_xyz){
+  
+      std::ifstream file(argv[filenames[0]]);
+      if(!file.is_open()){
+          std::cout << "Error: Could not find "<< argv[filenames[0]] << std::endl;
+          return -1;
+      }
+      
+      std::cout << "file opened." << std::endl;
+      double x_,y_,z_;
+
+      while(file >> x_ >> y_ >> z_){
+          
+          pcl::PointXYZRGB pt;
+          pt.x = x_;
+          pt.y = y_;
+          pt.z= z_;            
+          
+          cloud->points.push_back(pt);
+          //std::cout << "pointXYZRGB:" <<  pt << std::endl;
+      }      
+     
+      pcl::console::print_info("\nFound xyz file.\n");
+      pcl::console::print_info ("[done, ");
+      pcl::console::print_value ("%g", tt.toc ());
+      pcl::console::print_info (" ms : ");
+      pcl::console::print_value ("%d", cloud->points.size ());
       pcl::console::print_info (" points]\n");
   }
 
   cloud->width = (int) cloud->points.size ();
   cloud->height = 1;
-  cloud->is_dense = true;  
+  cloud->is_dense = true;
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz (new pcl::PointCloud<pcl::PointXYZ>());
   pcl::copyPointCloud(*cloud,*cloud_xyz);
@@ -507,7 +567,7 @@ int main(int argc, char **argv){
   std::cout << std::endl;
   pcl::io::savePolygonFilePLY(output_dir.c_str(),cloud_mesh,true);
 
-  vizualizeMesh(cloud_xyz,cloud_mesh);
+  vizualizeMesh(cloud,cloud_mesh);
    
   return 0;
 }

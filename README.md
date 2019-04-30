@@ -58,9 +58,9 @@ You can modify the parameters in "create_mesh" method to get better results!
     
     for POISSON:
     
-    poisson.setDepth(depth);//9
+    poisson.setDepth(depth);//7
     poisson.setInputCloud(cloud_with_normals);
-    poisson.setPointWeight(pointWeight);//4
+    poisson.setPointWeight(pointWeight);//2
     poisson.setDegree(2);
     poisson.setSamplesPerNode(samplePNode);//1.5
     poisson.setScale(scale);//1.1

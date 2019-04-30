@@ -130,7 +130,9 @@ void create_mesh(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud,int& surface_mode,in
        mls.setPointDensity(30);
        mls.setSearchMethod(kdtree_for_points);
        mls.setSearchRadius(0.03);
-       mls.process (*mls_points);
+       mls.process(*mls_points);
+
+       
 
        pcl::PointCloud<pcl::PointXYZ>::Ptr temp(new pcl::PointCloud<pcl::PointXYZ>());
 
@@ -143,6 +145,7 @@ void create_mesh(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud,int& surface_mode,in
 
               temp->points.push_back(pt);            
         }
+        
 
        pcl::concatenateFields (*temp, *mls_points, *cloud_with_normals);
        std::cout << "[OK]" << std::endl;

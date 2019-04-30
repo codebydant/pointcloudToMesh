@@ -122,17 +122,15 @@ void create_mesh(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud,int& surface_mode,in
        //Set parameters
        mls.setComputeNormals(true);  
        mls.setInputCloud(cloudTranslated);
-       mls.setDilationIterations(10);
-       mls.setDilationVoxelSize(0.5);
-       mls.setSqrGaussParam(2.0);
-       mls.setUpsamplingRadius(5);
-       mls.setPolynomialOrder (2); 
-       mls.setPointDensity(30);
+      // mls.setDilationIterations(10);
+       //mls.setDilationVoxelSize(0.5);
+       //mls.setSqrGaussParam(2.0);
+       //mls.setUpsamplingRadius(5);
+       //mls.setPolynomialOrder (2); 
+       //mls.setPointDensity(30);
        mls.setSearchMethod(kdtree_for_points);
        mls.setSearchRadius(0.03);
-       mls.process(*mls_points);
-
-       
+       mls.process(*mls_points);  
 
        pcl::PointCloud<pcl::PointXYZ>::Ptr temp(new pcl::PointCloud<pcl::PointXYZ>());
 

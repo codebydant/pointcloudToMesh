@@ -191,9 +191,9 @@ void create_mesh(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud,int& surface_mode,in
        gp3.setSearchRadius(search_radius);//It was 0.025
        gp3.setMu(setMU); //It was 2.5
        gp3.setMaximumNearestNeighbors(maxiNearestNeighbors);    //It was 100
-       gp3.setMaximumSurfaceAngle(M_PI/4); // 45 degrees    //it was 4
-       gp3.setMinimumAngle(M_PI/18); // 10 degrees //It was 18
-       gp3.setMaximumAngle(M_PI/1.5); // 120 degrees        //it was 1.5
+       //gp3.setMaximumSurfaceAngle(M_PI/4); // 45 degrees    //it was 4
+       //gp3.setMinimumAngle(M_PI/18); // 10 degrees //It was 18
+       //gp3.setMaximumAngle(M_PI/1.5); // 120 degrees        //it was 1.5
        gp3.setNormalConsistency(normalConsistency); //It was false
        gp3.setInputCloud(cloud_with_normals);
        gp3.setSearchMethod(kdtree_for_normals);
@@ -214,15 +214,15 @@ void create_mesh(pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud,int& surface_mode,in
 
         int nThreads=8;
         int setKsearch=10;
-        int depth=10;
-        float pointWeight=4.0;
+        int depth=7;
+        float pointWeight=2.0;
         float samplePNode=1.5;
-        float scale=1.0;
-        int isoDivide=5;
+        float scale=1.1;
+        int isoDivide=8;
         bool confidence=true;
         bool outputPolygons=true;
         bool manifold=true;
-        int solverDivide=5;
+        int solverDivide=8;
 
         pcl::Poisson<pcl::PointNormal> poisson;
 

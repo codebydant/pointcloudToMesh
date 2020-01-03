@@ -499,7 +499,9 @@ int main(int argc, char **argv){
 
   pcl::io::savePLYFileBinary(output_dir.c_str(),cloud_mesh);
   //pcl::io::savePolygonFilePLY(output_dir.c_str(),cloud_mesh,true);
-
+           
+           
+  vtkObject::GlobalWarningDisplayOff(); // Disable vtk render warning   
   vizualizeMesh(cloud,cloud_mesh);
    
   return 0;

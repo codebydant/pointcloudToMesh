@@ -24,7 +24,7 @@ set(CMAKE_MODULE_PATH ${PCL_DIR}/../cmake/Modules)
 
 # set cmake for use std c++11 and output executable folder to bin
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+# set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 ##############################################################################
 # PACKAGES

@@ -1,18 +1,14 @@
-name: build
-on: [push]
+name: CI (continuous integration)
+
+on:
+  # pull_request:
+  #   branches: [main]
+  push:
+    # branches: [main]
+    paths-ignore: ["**.md"]
+    branches-ignore: ["master"]
+  workflow_call:
+
 jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-20.04
-    steps:
-  
-    - name: Install PCL
-      run: sudo apt-get install libpcl-dev
-
-    - name: Configure CMake
-      run: cmake -B ${{dir}}/build -DCMAKE_BUILD_TYPE=Release
-
-    - name: Build
-      run: cmake --build ${{dir}}/build --config Release
-      
-    - name: Test
-      run: build/pointcloudToMESH
+  ci:
+    uses: ./.github/workflows/lint_and_test.yml

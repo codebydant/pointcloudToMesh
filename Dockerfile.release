@@ -1,0 +1,9 @@
+FROM ubuntu:20.04 AS runtime
+RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && DEBIAN_FRONTEND=noninteractive apt-get -y -qq -o=Dpkg::Use-Pty=0 install \
+  libpcl-dev \
+  && rm -rf /var/lib/apt/lists/*
+COPY install /usr
+ENV MESA_LOADER_DRIVER_OVERRIDE i965
+
+# ======== Run binary file ========
+ENTRYPOINT ["pointcloudToMESH"]

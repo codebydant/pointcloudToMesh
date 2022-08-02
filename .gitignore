@@ -41,3 +41,4 @@ PCL-Build-Action/
 .secrets
 
 run_dev.sh
+clang-format-all.sh

@@ -38,6 +38,11 @@ fetch_project(
     URL https://github.com/p-ranav/argparse/archive/v2.6.tar.gz
 )
 
+fetch_project(
+    NAME cloudparse
+    URL https://github.com/danielTobon43/cloudparse/archive/v0.2.1.tar.gz
+)
+
 # #############################################################################
 # SOURCE CODE
 # #############################################################################
@@ -51,7 +56,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # #############################################################################
 # TARGET LIBRARIES
 # #############################################################################
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PCL_LIBRARIES} argparse)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PCL_LIBRARIES} argparse cloudparse)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -mno-avx -mno-avx2)
 

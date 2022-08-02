@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
   }
 
   // parse data from command line
-  int surface_mode = arg_parser.get<int>("--surface");
   int normal_method = arg_parser.get<int>("--normal");
+  int surface_mode = arg_parser.get<int>("--surface");
   std::string filename = arg_parser.get<std::string>("--file");
   std::string output_dir = arg_parser.get<std::string>("--output-dir");
 
@@ -55,14 +55,8 @@ int main(int argc, char **argv) {
   cloud->is_dense = true;
 
   // -----------------Compute mesh surface -----------------
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>());
-  pcl::copyPointCloud(*cloud, *cloud_xyz);
-
-  // pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz_filtered (new pcl::PointCloud<pcl::PointXYZ>());
-  // cloudPointFilter(cloud_xyz, cloud_xyz_filtered);
-
   pcl::PolygonMesh cloud_mesh;
-  create_mesh(cloud_xyz, surface_mode, normal_method, cloud_mesh);
+  create_mesh(cloud, normal_method, surface_mode, cloud_mesh);
 
   // export mesh file
   dirPath /= "cloud_mesh.ply";

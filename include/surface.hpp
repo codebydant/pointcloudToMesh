@@ -59,17 +59,6 @@ void set_normal_est_method(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud, int &meth
       // mls.setPolynomialOrder (2);
       // mls.setPointDensity(30);
 
-      // pcl::PointCloud<pcl::PointXYZ>::Ptr temp(new pcl::PointCloud<pcl::PointXYZ>());
-
-      // for (int i = 0; i < mls_points->points.size(); i++) {
-      //   pcl::PointXYZ pt;
-      //   pt.x = cloud->points[i].x;
-      //   pt.y = cloud->points[i].y;
-      //   pt.z = cloud->points[i].z;
-
-      //   temp->points.push_back(pt);
-      // }
-
       pcl::concatenateFields(*cloud, *mls_points, *cloud_with_normals);
       break;
     }
@@ -105,17 +94,17 @@ void set_surface_est_method(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_with_n
 
       pcl::Poisson<pcl::PointNormal> poisson;
 
-      poisson.setDepth(depth);  // 9
+      poisson.setDepth(depth);                  // 9
       poisson.setInputCloud(cloud_with_normals);
-      poisson.setPointWeight(pointWeight);  // 4
+      poisson.setPointWeight(pointWeight);      // 4
       poisson.setDegree(2);
-      poisson.setSamplesPerNode(samplePNode);  // 1.5
-      poisson.setScale(scale);                 // 1.1
-      poisson.setIsoDivide(isoDivide);         // 8
+      poisson.setSamplesPerNode(samplePNode);   // 1.5
+      poisson.setScale(scale);                  // 1.1
+      poisson.setIsoDivide(isoDivide);          // 8
       poisson.setConfidence(confidence);
       poisson.setOutputPolygons(outputPolygons);
       poisson.setManifold(manifold);
-      poisson.setSolverDivide(solverDivide);  // 8
+      poisson.setSolverDivide(solverDivide);    // 8
       poisson.reconstruct(triangles);
 
       break;
@@ -143,9 +132,9 @@ void set_surface_est_method(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_with_n
       gp3.setInputCloud(cloud_with_normals);
       gp3.setSearchMethod(kdtree_for_normals);
       gp3.reconstruct(triangles);
-      // gp3.setMaximumSurfaceAngle(M_PI/4); // 45 degrees    //it was 4
-      // gp3.setMinimumAngle(M_PI/18); // 10 degrees //It was 18
-      // gp3.setMaximumAngle(M_PI/1.5); // 120 degrees        //it was 1.5
+      // gp3.setMaximumSurfaceAngle(M_PI/4);                  // 45 degrees
+      // gp3.setMinimumAngle(M_PI/18);                        // 10 degrees
+      // gp3.setMaximumAngle(M_PI/1.5);                       // 120 degrees
 
       break;
     }

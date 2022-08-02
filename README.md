@@ -1,70 +1,46 @@
 # pointcloudToMesh
-C++ application to convert pcd file, ply file, txt file or xyz point cloud to MESH representation (Gp3)
+C++ application to convert a pcd, ply, txt or xyz point cloud data file into a MESH representation (Gp3/poisson). This projects is based in the Point Cloud Library 1.12.1 as backend.
 
 -------------------
 ## Input file structure support
 
-* .pcd 
-* .ply
-* .txt
-* .xyz
+| Format      | Description |
+| ----------- | ----------- |
+| .pcd        | Point Cloud Data file format       |
+| .ply        | Polygon file format                   |
+| .txt        | Text file format                      |
+| .xyz        | X Y Z Text file format             |
 
 ## Output file structure 
-Mesh cloud:
-* .ply
+
+| Mesh Cloud      | Description |
+| ----------- | ----------- |
+| .ply   | Polygon mesh file       |
 
 ## Example
-<img src="./example/mss1.png" align="center" height="400" width="700"><br>
+<p align="center">
+   <img src="./example/mss1.png" align="center" height="400" width="700"><br>
+</p>
 
-## Docker image
-There is a docker image for this project stored in docker hub, [here](https://hub.docker.com/r/danieltobon43/pointcloud-to-mesh). This image is compiled with [pcl-docker-1.9.1](https://hub.docker.com/r/danieltobon43/pcl-docker-1-9-1), Ubuntu 20.04 and the mesh project (`5.85GB`aprox.).
+## Compile
+You can either build the project from source or download a docker image.
 
-To use it you have to install [docker-engine](https://docs.docker.com/engine/install/) in your host machine:
-
-Download the docker image
-
+### Compiling from source code
+1. Download source code:
 ```
-docker pull danieltobon43/pointcloud-to-mesh:1.0-ubuntu-20-04
-```
-
-Check downloaded image
-```
-docker images
+git clone https://github.com/danielTobon43/pointcloudToMesh
 ```
 
-Run a docker container
+2. Create a "build" folder
+3. Run CMake
+
 ```
-docker run --rm -it \
-           --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
-           --volume=/tmp/.docker.xauth:/tmp/.docker.xauth:rw \
-           --env="XAUTHORITY=/tmp/.docker.xauth" \
-           --env="DISPLAY" \
-           --name="mesh" \
-           --cap-add sys_ptrace \
-           -p 127.0.0.1:2222:22 \
-           --user=pcl \
-           --volume=[PATH TO YOUR PCD FOLDER]:/home/pcl/project/pcd \
-           -t danieltobon43/pointcloud-to-mesh:1.0-ubuntu-20-04 pcd/[YOUR PCD FILENAME] [surface method] [normal method] [output dir]
+cd build/ && cmake ../src && make
 ```
-
-The previous command will run a docker container with the `danieltobon43/pointcloud-to-mesh:1.0-ubuntu-20-04`  image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the pcd folder in the container.
-
-More information about this docker image can be found in the docker hub repository.
-
-## Compilation
-* Set "YOUR OWN" PCL Build DIR in CMakeList.txt e.g: **/opt/pcl-1.8.1/build** and save it
-* Create a "build" folder
-
-in the main folder:
-
-    - cd build  
-    - cmake ../src/
-    - make
        
-        	 
-### Test
-
-    ./pointcloudToMESH <input cloud> <surface method estimation> <normal method estimation> <output dir>
+4. Run project
+```
+./pointcloudToMESH <input cloud> <surface method estimation> <normal method estimation> <output dir>
     
     surface method estimation:
         1 --> for poisson
@@ -75,10 +51,32 @@ in the main folder:
         2 --> for mls normal estimation
         
      example:
-     ./pointcloudToMESH /home/xXx/PCD-PLY_Files/cloud.txt 2 1 /home/xXx/Desktop    
+     ./pointcloudToMESH /home/xXx/PCD-PLY_Files/cloud.txt 2 1 /home/xXx/Desktop 
+```
 
+### Docker image
+1. Download the docker image
+
+```
+docker pull ghcr.io/danieltobon43/pcdtomesh:latest
+```
+
+2. Run a docker container
+```
+docker run --rm -it \
+           --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
+           --volume=/tmp/.docker.xauth:/tmp/.docker.xauth:rw \
+           --env="XAUTHORITY=/tmp/.docker.xauth" \
+           --env="DISPLAY" \
+           --name="mesh" \
+           --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
+           -t ghcr.io/danieltobon43/pcdtomesh:latest /tmp/[YOUR PCD FILENAME] [surface method] [normal method] /tmp
+```
+
+The previous command will run a docker container with the `ghcr.io/danieltobon43/pcdtomesh:latest` image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the tmp folder in the container.
   
-You can modify the parameters in "create_mesh" method to get better results!
+## Note  
+These parameters can be modify in "create_mesh" method to get better results!
   
     for GP3:
     

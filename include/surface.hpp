@@ -94,17 +94,17 @@ void set_surface_est_method(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_with_n
 
       pcl::Poisson<pcl::PointNormal> poisson;
 
-      poisson.setDepth(depth);                  // 9
+      poisson.setDepth(depth);  // 9
       poisson.setInputCloud(cloud_with_normals);
-      poisson.setPointWeight(pointWeight);      // 4
+      poisson.setPointWeight(pointWeight);  // 4
       poisson.setDegree(2);
-      poisson.setSamplesPerNode(samplePNode);   // 1.5
-      poisson.setScale(scale);                  // 1.1
-      poisson.setIsoDivide(isoDivide);          // 8
+      poisson.setSamplesPerNode(samplePNode);  // 1.5
+      poisson.setScale(scale);                 // 1.1
+      poisson.setIsoDivide(isoDivide);         // 8
       poisson.setConfidence(confidence);
       poisson.setOutputPolygons(outputPolygons);
       poisson.setManifold(manifold);
-      poisson.setSolverDivide(solverDivide);    // 8
+      poisson.setSolverDivide(solverDivide);  // 8
       poisson.reconstruct(triangles);
 
       break;

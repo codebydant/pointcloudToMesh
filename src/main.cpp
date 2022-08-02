@@ -61,6 +61,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/thread/thread.hpp>
 
+#include "argparse/argparse.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -338,54 +339,50 @@ std::endl;
 
 int main(int argc, char **argv) {
 
+  argparse::ArgumentParser arg_parser(argv[0]);
+
+  arg_parser.add_argument("--file").required().help("input cloud file");
+  arg_parser.add_argument("--surface")
+      .default_value(int(2))
+      .scan<'i', int>()
+      .help("surface method 1: poisson 2: gp3");
+  arg_parser.add_argument("--normal")
+      .default_value(int(1))
+      .scan<'i', int>()
+      .help("normal estimation method 1:normal 2: mls");
+  arg_parser.add_argument("-o", "--output-dir")
+      .default_value(std::string("-"))
+      .help("output dir to save mesh file");
+  arg_parser.add_argument("-d", "--display")
+      .default_value(false)
+      .implicit_value(true)
+      .help("display mesh in the pcl visualizer");
+
+  try {
+    arg_parser.parse_args(argc, argv);
+  } catch (const std::runtime_error &err) {
+    std::cerr << err.what() << std::endl;
+    std::cerr << arg_parser;
+    std::exit(0);
+  }
+
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(
       new pcl::PointCloud<pcl::PointXYZRGB>());
   pcl::PolygonMesh cl;
   std::vector<int> filenames;
-  bool file_is_pcd = false;
+  bool file_is_pcd = true;
   bool file_is_ply = false;
   bool file_is_txt = false;
   bool file_is_xyz = false;
 
-  if (argc < 5 or argc > 5) {
-    printUsage(argv[0]);
-    return 0;
-  }
-
   pcl::console::TicToc tt;
   pcl::console::print_highlight("Loading ");
 
-  filenames = pcl::console::parse_file_extension_argument(argc, argv, ".ply");
-  if (filenames.size() <= 0) {
-    filenames = pcl::console::parse_file_extension_argument(argc, argv, ".pcd");
-    if (filenames.size() <= 0) {
-      filenames =
-          pcl::console::parse_file_extension_argument(argc, argv, ".txt");
-      if (filenames.size() <= 0) {
-        filenames =
-            pcl::console::parse_file_extension_argument(argc, argv, ".xyz");
-        if (filenames.size() <= 0) {
-          printUsage(argv[0]);
-          return -1;
-        } else if (filenames.size() == 1) {
-          file_is_xyz = true;
-        }
-      } else if (filenames.size() == 1) {
-        file_is_txt = true;
-      }
-    } else if (filenames.size() == 1) {
-      file_is_pcd = true;
-    }
-  } else if (filenames.size() == 1) {
-    file_is_ply = true;
-  } else {
-    printUsage(argv[0]);
-    return -1;
-  }
+  std::string filename = arg_parser.get<std::string>("--file");
 
   if (file_is_pcd) {
-    if (pcl::io::loadPCDFile(argv[filenames[0]], *cloud) < 0) {
-      std::cout << "Error loading point cloud " << argv[filenames[0]] << "\n";
+    if (pcl::io::loadPCDFile(filename, *cloud) < 0) {
+      std::cout << "Error loading point cloud " << filename << "\n";
       return -1;
     }
     pcl::console::print_info("\nFound pcd file.\n");
@@ -395,13 +392,13 @@ int main(int argc, char **argv) {
     pcl::console::print_value("%d", cloud->size());
     pcl::console::print_info(" points]\n");
   } else if (file_is_ply) {
-    pcl::io::loadPLYFile(argv[filenames[0]], *cloud);
+    pcl::io::loadPLYFile(filename, *cloud);
     if (cloud->points.size() <= 0 or cloud->points[0].x <= 0 and
                                          cloud->points[0].y <= 0 and
                                          cloud->points[0].z <= 0) {
       pcl::console::print_warn("\nloadPLYFile could not read the cloud, "
                                "attempting to loadPolygonFile...\n");
-      pcl::io::loadPolygonFile(argv[filenames[0]], cl);
+      pcl::io::loadPolygonFile(filename, cl);
       pcl::fromPCLPointCloud2(cl.cloud, *cloud);
       if (cloud->points.size() <= 0 or cloud->points[0].x <= 0 and
                                            cloud->points[0].y <= 0 and
@@ -409,7 +406,7 @@ int main(int argc, char **argv) {
         pcl::console::print_warn("\nloadPolygonFile could not read the cloud, "
                                  "attempting to PLYReader...\n");
         pcl::PLYReader plyRead;
-        plyRead.read(argv[filenames[0]], *cloud);
+        plyRead.read(filename, *cloud);
         if (cloud->points.size() <= 0 or cloud->points[0].x <= 0 and
                                              cloud->points[0].y <= 0 and
                                              cloud->points[0].z <= 0) {
@@ -427,9 +424,9 @@ int main(int argc, char **argv) {
     pcl::console::print_info(" points]\n");
 
   } else if (file_is_txt) {
-    std::ifstream file(argv[filenames[0]]);
+    std::ifstream file(filename);
     if (!file.is_open()) {
-      std::cout << "Error: Could not find " << argv[filenames[0]] << std::endl;
+      std::cout << "Error: Could not find " << filename << std::endl;
       return -1;
     }
 
@@ -464,9 +461,9 @@ int main(int argc, char **argv) {
 
   } else if (file_is_xyz) {
 
-    std::ifstream file(argv[filenames[0]]);
+    std::ifstream file(filename);
     if (!file.is_open()) {
-      std::cout << "Error: Could not find " << argv[filenames[0]] << std::endl;
+      std::cout << "Error: Could not find " << filename << std::endl;
       return -1;
     }
 
@@ -496,12 +493,10 @@ int main(int argc, char **argv) {
   cloud->height = 1;
   cloud->is_dense = true;
 
-  std::string select_mode = argv[2];
-  std::string select_normal_method = argv[3]; // 10
-  std::string output_dir = argv[4];           // 10
+  std::string output_dir = arg_parser.get<std::string>("--output-dir");
 
-  int surface_mode = std::atoi(select_mode.c_str());
-  int normal_method = std::atoi(select_normal_method.c_str());
+  int surface_mode = arg_parser.get<int>("--surface");
+  int normal_method = arg_parser.get<int>("--normal");
 
   boost::filesystem::path dirPath(output_dir);
 
@@ -536,7 +531,6 @@ int main(int argc, char **argv) {
   std::cout << std::endl;
 
   pcl::io::savePLYFileBinary(output_dir.c_str(), cloud_mesh);
-  // pcl::io::savePolygonFilePLY(output_dir.c_str(),cloud_mesh,true);
 
   vtkObject::GlobalWarningDisplayOff(); // Disable vtk render warning
   vizualizeMesh(cloud, cloud_mesh);

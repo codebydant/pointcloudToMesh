@@ -51,7 +51,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 # #############################################################################
 # TARGET LIBRARIES
 # #############################################################################
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PCL_LIBRARIES} argparse)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PCL_INCLUDE_DIRS})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cpp -mno-avx -mno-avx2)
 

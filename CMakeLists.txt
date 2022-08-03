@@ -54,6 +54,11 @@ set(MAIN_SOURCE "src/main.cpp")
 add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
 
 # #############################################################################
+# TARGET HEADERS
+# #############################################################################
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+
+# #############################################################################
 # TARGET LIBRARIES
 # #############################################################################
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PCL_LIBRARIES} argparse cloudparse)

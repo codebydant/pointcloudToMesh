@@ -74,6 +74,24 @@ docker run --rm -it \
 ```
 
 The previous command will run a docker container with the `ghcr.io/danieltobon43/pcdtomesh:latest` image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the tmp folder in the container.
+
+If you get something like this after setting `--display` flag it might be related to [this](https://stackoverflow.com/questions/48833451/no-protocol-specified-when-running-a-sudo-su-app-on-ubuntu-linux):
+
+```bash
+No protocol specified
+```
+Try running with the following command belowe or use the provided `.sh` [script](https://github.com/danielTobon43/DBScan-PCL-Optimized/blob/master/scripts/run_dbscan.sh):
+```
+sudo -sE docker run --rm -it \
+           --env="DISPLAY" \
+           --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
+           --volume=/tmp/.docker.xauth:/tmp/.docker.xauth:rw \
+           --name="dbscan" \
+           --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
+           -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/[YOUR PCD FILENAME] --display
+```
+
+If this still does not work to display, run: `xhost +local:docker` and then run the option 1 command.
   
 ## Note  
 These parameters can be modify in "create_mesh" method to get better results!

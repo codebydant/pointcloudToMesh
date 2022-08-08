@@ -31,11 +31,11 @@ jobs:
       - name: Test app
         run: ${{github.workspace}}/build/pointcloudToMESH
 
-      - name: Store artifact
-        uses: actions/upload-artifact@master
+      - name: Artifact (with permissions)
+        uses: actions/cache@v2
         with:
-          name: build
           path: ${{github.workspace}}/install
+          key: artifacts-${{ github.run_id }}-${{ github.run_number }}
 
   lint:
     needs: [build]

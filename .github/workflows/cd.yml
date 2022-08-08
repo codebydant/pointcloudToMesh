@@ -71,6 +71,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
+          file: Dockerfile.release.ubuntu
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

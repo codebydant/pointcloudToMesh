@@ -28,7 +28,7 @@ You can either build the project from source or download a docker image.
 ### Compiling from source code
 1. Download source code:
 ```
-git clone https://github.com/danielTobon43/pointcloudToMesh
+git clone https://github.com/codebydant/pointcloudToMesh
 ```
 
 2. Create a "build" folder
@@ -58,7 +58,7 @@ cd build/ && cmake ../src && make
 1. Download the docker image
 
 ```
-docker pull ghcr.io/danieltobon43/pcdtomesh:latest
+docker pull ghcr.io/codebydant/pcdtomesh:latest
 ```
 
 2. Run a docker container
@@ -70,17 +70,17 @@ docker run --rm -it \
            --env="DISPLAY" \
            --name="mesh" \
            --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
-           -t ghcr.io/danieltobon43/pcdtomesh:latest /tmp/[YOUR PCD FILENAME] [surface method] [normal method] /tmp
+           -t ghcr.io/codebydant/pcdtomesh:latest /tmp/[YOUR PCD FILENAME] [surface method] [normal method] /tmp
 ```
 
-The previous command will run a docker container with the `ghcr.io/danieltobon43/pcdtomesh:latest` image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the tmp folder in the container.
+The previous command will run a docker container with the `ghcr.io/codebydant/pcdtomesh:latest` image and will share a `.pcd` file from the host machine (`[PATH TO YOUR PCD FOLDER]`) to the tmp folder in the container.
 
 If you get something like this after setting `--display` flag it might be related to [this](https://stackoverflow.com/questions/48833451/no-protocol-specified-when-running-a-sudo-su-app-on-ubuntu-linux):
 
 ```bash
 No protocol specified
 ```
-Try running with the following command belowe or use the provided `.sh` [script](https://github.com/danielTobon43/DBScan-PCL-Optimized/blob/master/scripts/run_dbscan.sh):
+Try running with the following command belowe or use the provided `.sh` [script](https://github.com/codebydant/DBScan-PCL-Optimized/blob/master/scripts/run_dbscan.sh):
 ```
 sudo -sE docker run --rm -it \
            --env="DISPLAY" \
@@ -88,7 +88,7 @@ sudo -sE docker run --rm -it \
            --volume=/tmp/.docker.xauth:/tmp/.docker.xauth:rw \
            --name="dbscan" \
            --volume=[PATH TO YOUR PCD FOLDER]:/tmp \
-           -t ghcr.io/danieltobon43/dbscan-octrees:latest --cloudfile /tmp/[YOUR PCD FILENAME] --display
+           -t ghcr.io/codebydant/dbscan-octrees:latest --cloudfile /tmp/[YOUR PCD FILENAME] --display
 ```
 
 If this still does not work to display, run: `xhost +local:docker` and then run the option 1 command.
